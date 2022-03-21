@@ -47,6 +47,7 @@ import axios from "axios";
 import { IItem } from "../types";
 import { useStore } from "vuex";
 import { key, State } from "../store";
+import { store } from "../store/index";
 
 export default defineComponent({
   name: "Home",
@@ -73,51 +74,31 @@ export default defineComponent({
   methods: {
     // eslint-disable-next-line
     addToCart: function (e: any) {
-      const btn = e.target;
-      const toAdd = this.items.find(
-        (item: IItem) => item.id === parseInt(btn.id)
-      );
-
-      if (toAdd !== undefined) {
-        toAdd.onCart = true;
-        this.cart.push(toAdd as IItem);
-      }
-
-      console.log(toAdd);
+      store.commit("addToBag", { items: this.items, btn: e.target });
     },
     // eslint-disable-next-line
     removeToCart: function (e: any) {
-      const btn = e.target;
-      const toRemove = this.items.find(
-        (item: IItem) => item.id === parseInt(btn.id)
-      );
-
-      if (toRemove !== undefined) {
-        toRemove.onCart = false;
-        this.cart = this.cart.filter((item) => item.id !== toRemove.id);
-      }
+      store.commit("removeToBag", { items: this.items, btn: e.target });
     },
     setUpCart: function (storeCart: State["cart"]) {
       this.cart = storeCart;
     },
-    initializeItems: function () {
-      (async () => {
-        try {
-          const { data } = await axios.get("https://fakestoreapi.com/products");
-          // eslint-disable-next-line
-          this.items = data.map((frag: any) => {
-            return {
-              id: frag.id,
-              title: frag.title,
-              image: frag.image,
-              price: frag.price,
-              onCart: false,
-            };
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      })();
+    initializeItems: async function () {
+      try {
+        const { data } = await axios.get("https://fakestoreapi.com/products");
+        // eslint-disable-next-line
+        this.items = data.map((frag: any) => {
+          return {
+            id: frag.id,
+            title: frag.title,
+            image: frag.image,
+            price: frag.price,
+            onCart: false,
+          };
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 });

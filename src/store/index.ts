@@ -7,9 +7,9 @@ export interface State {
   cart: IItem[];
 }
 
-interface ComponentCustomProperties {
-  $store: Store<State>;
-}
+// interface ComponentCustomProperties {
+//   $store: Store<State>;
+// }
 
 // eslint-disable-next-line
 export function useStore(): any {
@@ -26,15 +26,27 @@ export const store = createStore<State>({
   mutations: {
     // eslint-disable-next-line
     addToBag(state: State, { items, btn }: { items: IItem[]; btn: any }) {
+      console.log("ADD ITEM");
       const toAdd = items.find((item: IItem) => item.id === parseInt(btn.id));
 
-      if (toAdd !== undefined) {
+      if (toAdd !== undefined && !toAdd.onCart) {
         toAdd.onCart = true;
         state.cart.push(toAdd as IItem);
       }
     },
+    // eslint-disable-next-line
+    removeToBag(state: State, { items, btn }: { items: IItem[]; btn: any }) {
+      const toRemove = items.find(
+        (item: IItem) => item.id === parseInt(btn.id)
+      );
+
+      if (toRemove !== undefined && toRemove.onCart) {
+        toRemove.onCart = false;
+        state.cart = state.cart.filter((item) => item.id !== toRemove.id);
+      }
+    },
   },
-  actions: {
+  /* actions: {
     loadProducts() {
       //
     },
@@ -44,7 +56,9 @@ export const store = createStore<State>({
     removeFromBag() {
       //
     },
-    addToBag() {},
-  },
+    addToBag() {
+      //
+    },
+  }, */
   modules: {},
 });

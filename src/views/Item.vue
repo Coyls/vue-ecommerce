@@ -9,6 +9,7 @@
 import { defineComponent } from "vue";
 import { IItem } from "../types";
 import axios from "axios";
+
 export default defineComponent({
   name: "Item",
   data() {
@@ -20,35 +21,24 @@ export default defineComponent({
     this.initializeItems();
   },
   methods: {
-    initializeItems: function () {
-      (async () => {
-        try {
-          const { data } = await axios.get(
-            "https://fakestoreapi.com/products/" + this.$route.params.id
-          );
-          // eslint-disable-next-line
-          this.item = {
-            id: data.id,
-            title: data.title,
-            image: data.image,
-            price: data.price,
-            onCart: false,
-          };
-        } catch (err) {
-          console.log(err);
-        }
-      })();
+    initializeItems: async function () {
+      try {
+        const { data } = await axios.get(
+          "https://fakestoreapi.com/products/" + this.$route.params.id
+        );
+        // eslint-disable-next-line
+        this.item = {
+          id: data.id,
+          title: data.title,
+          image: data.image,
+          price: data.price,
+          onCart: false,
+        };
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
-  /* props: {
-    item : {
-      type : Object,
-      required : true
-    }
-  } ,
-  setup(props) {
-    console.log(props.item);
-  }, */
 });
 </script>
 <style lang="scss">
